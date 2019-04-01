@@ -1,6 +1,6 @@
 `timescale 1ns / 1ps
 //////////////////////////////////////////////////////////////////////////////////
-// Company: USTC ESLAB（Embeded System Lab）
+// Company: USTC ESLAB（Embeded System Lab�?
 // Engineer: Haojun Xia
 // Create Date: 2019/03/14 11:21:33
 // Design Name: RISCV-Pipline CPU
@@ -17,10 +17,10 @@ module NPC_Generator(
 
     always@(*)
     begin
-        case({ BranchE, JalrD, JalrE })
+        case({ BranchE, JalrE, JalD })
             3'b10x  :   PC_In <= BranchTarget; 
             3'b01x  :   PC_In <= JalrTarget;
-            3'b001  :   PC_In <= JalTargetl;
+            3'b001  :   PC_In <= JalTarget;
             3'b000  :   PC_In <= PCF + 4;
             default :   PC_In <= PCF;
         endcase
@@ -28,9 +28,9 @@ module NPC_Generator(
 endmodule
 
 //功能说明
-    //NPC_Generator是用来生成Next PC值得模块，根据不同的跳转信号选择不同的新PC值
+    //NPC_Generator是用来生成Next PC值得模块，根据不同的跳转信号选择不同的新PC�?
 //输入
-    //PCF              旧的PC值
+    //PCF              旧的PC�?
     //JalrTarget       jalr指令的对应的跳转目标
     //BranchTarget     branch指令的对应的跳转目标
     //JalTarget        jal指令的对应的跳转目标
@@ -38,6 +38,6 @@ endmodule
     //JalD==1          ID阶段的Jal指令确定跳转
     //JalrE==1         Ex阶段的Jalr指令确定跳转
 //输出
-    //PC_In            NPC的值
+    //PC_In            NPC的�??
 //实验要求  
     //实现NPC_Generator模块  
