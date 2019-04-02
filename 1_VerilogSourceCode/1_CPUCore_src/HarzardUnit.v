@@ -19,11 +19,90 @@ module HarzardUnit(
     output reg [1:0] Forward1E, Forward2E
     );
     //Stall and Flush signals generate
+    always@(*)
+    begin
+        if((Rs1D == RdE || Rs2D == RdE) && MemToRegE[0] == 1'b1)
+        begin
+            StallF <= 1'b1;
+            StallD <= 1'b1;
+            StallE <= 1'b0;
+            StallM <= 1'b0;
+            StallW <= 1'b0;
+        end
+        else
+        begin
+            StallF <= 1'b0;
+            StallD <= 1'b0;
+            StallE <= 1'b0;
+            StallM <= 1'b0;
+            StallW <= 1'b0;
+        end
+    end
+
+    always@(*)
+    begin
+        if(CpuRst)
+        begin
+            FlushF <= 1'b1;
+            FlushD <= 1'b1;
+            FlushE <= 1'b1;
+            FlushM <= 1'b1;
+            FlushW <= 1'b1;
+        end
+        else if(BranchE || JalrE)
+        begin
+            FlushF <= 1'b1;
+            FlushD <= 1'b1;
+            FlushE <= 1'b0;
+            FlushM <= 1'b0;
+            FlushW <= 1'b0;
+        end
+        else if(JalD)
+        begin
+            FlushF <= 1'b1;
+            FlushD <= 1'b0;
+            FlushE <= 1'b0;
+            FlushM <= 1'b0;
+            FlushW <= 1'b0;
+        end
+        else
+        begin
+            FlushF <= 1'b0;
+            FlushD <= 1'b0;
+            FlushE <= 1'b0;
+            FlushM <= 1'b0;
+            FlushW <= 1'b0;
+        end
+    end
 
     //Forward Register Source 1
-
+    always@(*)
+    begin
+        if(RegReadE[1] == 1'b1)
+        begin
+            if(RegWriteM != `NOREGWRITE && RdM != 5'b0 && Rs1E == RdM)                     //Forwarding from Mem
+                Forward1E <= 2'b10;
+            else if(RegWriteW != `NOREGWRITE && RdW != 5'b0 && Rs1E != RdM && Rs1E == RdW) //Forwarding from WB
+                Forward1E <= 2'b01;
+            else
+                Forward1E <= 2'b00;
+        end
+        else    Forward1E <= 2'b00;
+    end
     //Forward Register Source 2
-
+    always@(*)
+    begin
+        if(RegReadE[0] == 1'b1)
+        begin
+            if(RegWriteM != `NOREGWRITE && RdM != 5'b0 && Rs2E == RdM)                     //Forwarding from Mem
+                Forward2E <= 2'b10;
+            else if(RegWriteW != `NOREGWRITE && RdW != 5'b0 && Rs2E != RdM && Rs2E == RdW) //Forwarding from WB
+                Forward2E <= 2'b01;
+            else
+                Forward2E <= 2'b00;
+        end
+        else    Forward2E <= 2'b00;
+    end
 endmodule
 
 //功能说明
@@ -34,7 +113,7 @@ endmodule
     //ICacheMiss, DCacheMiss                    为后续实验预留信号，暂时可以无视，用来处理cache miss
     //BranchE, JalrE, JalD                      用来处理控制相关
     //Rs1D, Rs2D, Rs1E, Rs2E, RdE, RdM, RdW     用来处理数据相关，分别表示源寄存器1号码，源寄存器2号码，目标寄存器号码
-    //RegReadE RegReadD[1]==1                   表示A1对应的寄存器值被使用到了，RegReadD[0]==1表示A2对应的寄存器值被使用到了，用于forward的处理
+    //RegReadE RegReadE[1]==1                   表示A1对应的寄存器值被使用到了，RegReadD[0]==1表示A2对应的寄存器值被使用到了，用于forward的处理
     //RegWriteM, RegWriteW                      用来处理数据相关，RegWrite!=3'b0说明对目标寄存器有写入操作
     //MemToRegE                                 表示Ex段当前指令 从Data Memory中加载数据到寄存器中
 //输出

@@ -11,8 +11,8 @@
 //////////////////////////////////////////////////////////////////////////////////
 `include "Parameters.v"   
 module ALU(
-    input wire signed [31:0] Operand1,
-    input wire signed [31:0] Operand2,
+    input wire [31:0] Operand1,
+    input wire [31:0] Operand2,
     input wire [3:0] AluContrl,
     output reg [31:0] AluOut
     );
@@ -28,8 +28,8 @@ module ALU(
         `XOR : AluOut = Operand1 ^ Operand2;
         `OR  : AluOut = Operand1 | Operand2;
         `AND : AluOut = Operand1 & Operand2;
-        `SLT : AluOut = Operand1 < Operand2;
-        `SLTU: AluOut = $unsigned(Operand1) < $unsigned(Operand2);
+        `SLT : AluOut = $signed(Operand1) < $signed(Operand2) ? 32'b01 : 32'b0;
+        `SLTU: AluOut = $unsigned(Operand1) < $unsigned(Operand2) ? 32'b01 : 32'b0;
         `LUI : AluOut = Operand2;
         default : AluOut = 32'b0; 
       endcase

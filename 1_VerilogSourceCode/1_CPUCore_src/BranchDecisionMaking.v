@@ -21,9 +21,9 @@ module BranchDecisionMaking(
       case(BranchTypeE)
         `BEQ :   BranchE <= Operand1 == Operand2;
         `BNE :   BranchE <= Operand1 != Operand2;
-        `BLT :   BranchE <= Operand1 < Operand2;
+        `BLT :   BranchE <= $signed(Operand1) < $signed(Operand2);
         `BLTU:   BranchE <= $unsigned(Operand1) < $unsigned(Operand2);
-        `BGE :   BranchE <= Operand1 > Operand2;
+        `BGE :   BranchE <= $signed(Operand1) > $signed(Operand2);
         `BGEU:   BranchE <= $unsigned(Operand1) > $unsigned(Operand2);
         default :   BranchE <= 1'b0;
       endcase
