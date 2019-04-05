@@ -18,26 +18,13 @@ module NPC_Generator(
     always@(*)
     begin
         case({ BranchE, JalrE, JalD })
-            3'b10x  :   PC_In <= BranchTarget; 
-            3'b01x  :   PC_In <= JalrTarget;
+            3'b100  :   PC_In <= BranchTarget;
+            3'b101  :   PC_In <= BranchTarget;  //can be simplified using x'b10x type 
+            3'b010  :   PC_In <= JalrTarget;
+            3'b011  :   PC_In <= JalrTarget;    //can be simplified using x'b10x type
             3'b001  :   PC_In <= JalTarget;
             3'b000  :   PC_In <= PCF + 4;
             default :   PC_In <= PCF;
         endcase
     end
 endmodule
-
-//功能说明
-    //NPC_Generator是用来生成Next PC值得模块，根据不同的跳转信号选择不同的新PC�?
-//输入
-    //PCF              旧的PC�?
-    //JalrTarget       jalr指令的对应的跳转目标
-    //BranchTarget     branch指令的对应的跳转目标
-    //JalTarget        jal指令的对应的跳转目标
-    //BranchE==1       Ex阶段的Branch指令确定跳转
-    //JalD==1          ID阶段的Jal指令确定跳转
-    //JalrE==1         Ex阶段的Jalr指令确定跳转
-//输出
-    //PC_In            NPC的�??
-//实验要求  
-    //实现NPC_Generator模块  

@@ -55,6 +55,7 @@ module WBSegReg(
         end
 
     reg [3:0] WE_RE;
+    reg [31:0] WD_RE;
     always@(*)
     begin
         case(WE)
@@ -63,6 +64,7 @@ module WBSegReg(
             4'b1111:    WE_RE <= WE;
             default:    WE_RE <= 4'b0000;
         endcase
+        WD_RE <= WD << (A[1:0] * 8);
     end
 
     wire [31:0] RD_raw;
@@ -70,7 +72,7 @@ module WBSegReg(
         .clk    ( clk            ),
         .wea    ( WE_RE          ),
         .addra  ( A[31:2]        ),
-        .dina   ( WD             ),
+        .dina   ( WD_RE          ),
         .douta  ( RD_raw         ),
         .web    ( WE2            ),
         .addrb  ( A2[31:2]       ),

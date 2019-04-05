@@ -13,10 +13,15 @@
 // !!! ALL YOU NEED TO CHANGE IS 4 FILE PATH BELOW !!!	
 //				(they are all optional, you can run cpu without change paths here,if files are failed to open, we will not dump the content to .txt and will not try to initial your bram)
 //////////////////////////////////////////////////////////////////////////////////
-`define DataRamContentLoadPath "F:\\VivadoWorkspace\\RISCV-CPU\\RISCV-CPU.srcs\\sources_1\\new\\SimFiles\\1testAll.data"
-`define InstRamContentLoadPath "F:\\VivadoWorkspace\\RISCV-CPU\\RISCV-CPU.srcs\\sources_1\\new\\SimFiles\\1testAll.inst"
-`define DataRamContentSavePath "F:\\VivadoWorkspace\\RISCV-CPU\\RISCV-CPU.srcs\\sources_1\\new\\SimFiles\\DataRamContent.txt"
-`define InstRamContentSavePath "F:\\VivadoWorkspace\\RISCV-CPU\\RISCV-CPU.srcs\\sources_1\\new\\SimFiles\\InstRamContent.txt"
+`define DataRamContentLoadPath "D:\\CS_Lab\\CA_Lab\\Risc-V\\Risc-V.srcs\\sim_1\\imports\\2_Simulation\\2testAll.data"
+`define InstRamContentLoadPath "D:\\CS_Lab\\CA_Lab\\Risc-V\\Risc-V.srcs\\sim_1\\imports\\2_Simulation\\2testAll.inst"
+`define DataRamContentSavePath "D:\\CS_Lab\\CA_Lab\\Risc-V\\Risc-V.srcs\\sim_1\\imports\\2_Simulation\\DataRamContent.txt"
+`define InstRamContentSavePath "D:\\CS_Lab\\CA_Lab\\Risc-V\\Risc-V.srcs\\sim_1\\imports\\2_Simulation\\InstRamContent.txt"
+//`define DataRamContentLoadPath "C:\Users\Jerry\Vivado Projects\Risc-V Pipeline\Risc-V Pipeline.srcs\sim_1\imports\2_Simulation\1testAll.data"
+//`define InstRamContentLoadPath "C:\Users\Jerry\Vivado Projects\Risc-V Pipeline\Risc-V Pipeline.srcs\sim_1\imports\2_Simulation\1testAll.inst"
+//`define DataRamContentSavePath "C:\Users\Jerry\Vivado Projects\Risc-V Pipeline\Risc-V Pipeline.srcs\sim_1\imports\2_Simulation\DataRamContent.txt"
+//`define InstRamContentSavePath "C:\Users\Jerry\Vivado Projects\Risc-V Pipeline\Risc-V Pipeline.srcs\sim_1\imports\2_Simulation\InstRamContent.txt"
+
 `define BRAMWORDS 4096  //a word is 32bit, so our bram is 4096*32bit
 
 module testBench(
@@ -33,7 +38,8 @@ module testBench(
     reg [3:0] CPU_Debug_InstRAM_WE2;
     wire [31:0] CPU_Debug_InstRAM_RD2;
     //generate clock signal
-    always #1 CPU_CLK = ~CPU_CLK;
+    always #10 CPU_CLK = ~CPU_CLK;
+    always @ (posedge CPU_CLK);
     // Connect the CPU core
     RV32Core RV32Core1(
         .CPU_CLK(CPU_CLK),
@@ -65,7 +71,7 @@ module testBench(
         CPU_Debug_DataRAM_A2 = 32'b0;
         CPU_Debug_InstRAM_A2 = 32'b0;
         CPU_CLK=1'b0;
-        CPU_RST = 1'b0;
+        CPU_RST = 1'b1;
         #10
         
         $display("Loading DataRam Content from file..."); 
@@ -123,7 +129,7 @@ module testBench(
         CPU_RST = 1'b1;
         #10;   
         CPU_RST = 1'b0;
-        #400000 												// waiting for instruction Execution to End
+        #30000; 												// waiting for instruction Execution to End
         $display("Finish Instruction Execution!"); 
         
         $display("Saving DataRam Content to file..."); 

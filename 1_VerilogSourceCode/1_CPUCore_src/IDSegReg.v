@@ -1,6 +1,6 @@
 `timescale 1ns / 1ps
 //////////////////////////////////////////////////////////////////////////////////
-// Company: USTC ESLABï¼ˆEmbeded System Labï¼‰
+// Company: USTC ESLAB£¨Embeded System Lab£©
 // Engineer: Haojun Xia & Xuan Wang
 // Create Date: 2019/02/08
 // Design Name: RISCV-Pipline CPU
@@ -33,8 +33,8 @@ module IDSegReg(
     
     wire [31:0] RD_raw;
     InstructionRam InstructionRamInst (
-         .clk    ( clk        ),                        //è¯·å®Œå–„ä»£ç !!!
-         .addra  ( PCF[31:2]  ),                        //è¯·å®Œå–„ä»£ç !!!
+         .clk    ( clk        ),                        //ÇëÍêÉÆ´úÂë!!!
+         .addra  ( A[31:2]    ),                        //ÇëÍêÉÆ´úÂë!!!
          .douta  ( RD_raw     ),
          .web    ( |WE2       ),
          .addrb  ( A2[31:2]   ),
@@ -56,13 +56,27 @@ module IDSegReg(
     end    
     assign RD = stall_ff ? RD_old : (clear_ff ? 32'b0 : RD_raw );
 
+
 endmodule
 
-//åŠŸèƒ½è¯´æ˜
-    //IDSegRegæ˜¯IF-IDæ®µå¯„å­˜å™¨ï¼ŒåŒæ—¶åŒ…å«äº†ä¸€ä¸ªåŒæ­¥è¯»å†™çš„Bramï¼ˆæ­¤å¤„ä½ å¯ä»¥è°ƒç”¨æˆ‘ä»¬æä¾›çš„InstructionRamï¼Œ
-    //å®ƒå°†ä¼šè‡ªåŠ¨ç»¼åˆä¸ºblock memoryï¼Œä½ ä¹Ÿå¯ä»¥æ›¿ä»£æ€§çš„è°ƒç”¨xilinxçš„bram ipæ ¸ï¼‰ã€‚
-    //åŒæ­¥è¯»memory ç›¸å½“äº å¼‚æ­¥è¯»memory çš„è¾“å‡ºå¤–æ¥Dè§¦å‘å™¨ï¼Œéœ€è¦æ—¶é’Ÿä¸Šå‡æ²¿æ‰èƒ½è¯»å–æ•°æ®ã€‚
-    //æ­¤æ—¶å¦‚æœå†é€šè¿‡æ®µå¯„å­˜å™¨ç¼“å­˜ï¼Œé‚£ä¹ˆéœ€è¦ä¸¤ä¸ªæ—¶é’Ÿä¸Šå‡æ²¿æ‰èƒ½å°†æ•°æ®ä¼ é€’åˆ°Exæ®µ
-    //å› æ­¤åœ¨æ®µå¯„å­˜å™¨æ¨¡å—ä¸­è°ƒç”¨è¯¥åŒæ­¥memoryï¼Œç›´æ¥å°†è¾“å‡ºä¼ é€’åˆ°IDæ®µç»„åˆé€»è¾‘
-    //è°ƒç”¨memæ¨¡å—åè¾“å‡ºä¸ºRD_rawï¼Œé€šè¿‡assign RD = stall_ff ? RD_old : (clear_ff ? 32'b0 : RD_raw );
-    //ä»è€Œå®ç°RDæ®µå¯„å­˜å™¨stallå’ŒclearåŠŸèƒ½
+//¹¦ÄÜËµÃ÷
+    //IDSegRegÊÇIF-ID¶Î¼Ä´æÆ÷£¬Í¬Ê±°üº¬ÁËÒ»¸öÍ¬²½¶ÁĞ´µÄBram£¨´Ë´¦Äã¿ÉÒÔµ÷ÓÃÎÒÃÇÌá¹©µÄInstructionRam£¬
+    //Ëü½«»á×Ô¶¯×ÛºÏÎªblock memory£¬ÄãÒ²¿ÉÒÔÌæ´úĞÔµÄµ÷ÓÃxilinxµÄbram ipºË£©¡£
+    //Í¬²½¶Ámemory Ïàµ±ÓÚ Òì²½¶Ámemory µÄÊä³öÍâ½ÓD´¥·¢Æ÷£¬ĞèÒªÊ±ÖÓÉÏÉıÑØ²ÅÄÜ¶ÁÈ¡Êı¾İ¡£
+    //´ËÊ±Èç¹ûÔÙÍ¨¹ı¶Î¼Ä´æÆ÷»º´æ£¬ÄÇÃ´ĞèÒªÁ½¸öÊ±ÖÓÉÏÉıÑØ²ÅÄÜ½«Êı¾İ´«µİµ½Ex¶Î
+    //Òò´ËÔÚ¶Î¼Ä´æÆ÷Ä£¿éÖĞµ÷ÓÃ¸ÃÍ¬²½memory£¬Ö±½Ó½«Êä³ö´«µİµ½ID¶Î×éºÏÂß¼­
+    //µ÷ÓÃmemÄ£¿éºóÊä³öÎªRD_raw£¬Í¨¹ıassign RD = stall_ff ? RD_old : (clear_ff ? 32'b0 : RD_raw );
+    //´Ó¶øÊµÏÖRD¶Î¼Ä´æÆ÷stallºÍclear¹¦ÄÜ
+//ÊµÑéÒªÇó  
+    //ÄãĞèÒª²¹È«ÉÏ·½´úÂë£¬Ğè²¹È«µÄÆ¬¶Î½ØÈ¡ÈçÏÂ
+    //InstructionRam InstructionRamInst (
+    //     .clk    (),                        //ÇëÍêÉÆ´úÂë
+    //     .addra  (),                        //ÇëÍêÉÆ´úÂë
+    //     .douta  ( RD_raw     ),
+    //     .web    ( |WE2       ),
+    //     .addrb  ( A2[31:2]   ),
+    //     .dinb   ( WD2        ),
+    //     .doutb  ( RD2        )
+    // );
+//×¢ÒâÊÂÏî
+    //ÊäÈëµ½DataRamµÄaddraÊÇ×ÖµØÖ·£¬Ò»¸ö×Ö32bit

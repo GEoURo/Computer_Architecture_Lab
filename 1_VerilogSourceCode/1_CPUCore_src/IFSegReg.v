@@ -26,8 +26,3 @@ module IFSegReg(
         end
     
 endmodule
-
-//功能说明
-    //IDSegReg是IF-ID段寄存器
-//实验要求  
-    //无需修改

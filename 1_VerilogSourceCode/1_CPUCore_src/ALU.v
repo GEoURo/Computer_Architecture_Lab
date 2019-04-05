@@ -20,9 +20,9 @@ module ALU(
     always@(*)
     begin
       case(AluContrl)
-        `SLL : AluOut = Operand1 << Operand2;
-        `SRL : AluOut = Operand1 >> Operand2;
-        `SRA : AluOut = Operand1 >>> Operand2;
+        `SLL : AluOut = Operand1 << Operand2[4:0];
+        `SRL : AluOut = Operand1 >> Operand2[4:0];
+        `SRA : AluOut = $signed(Operand1) >>> Operand2[4:0];
         `ADD : AluOut = Operand1 + Operand2;
         `SUB : AluOut = Operand1 - Operand2;
         `XOR : AluOut = Operand1 ^ Operand2;
@@ -36,10 +36,10 @@ module ALU(
     end
 endmodule
 
-//功能和接口说明
+//功能和接口说�??
 	//ALU接受两个操作数，根据AluContrl的不同，进行不同的计算操作，将计算结果输出到AluOut
-	//AluContrl的类型定义在Parameters.v中
-//推荐格式：
+	//AluContrl的类型定义在Parameters.v�??
+//推荐格式�??
     //case()
     //    `ADD:        AluOut<=Operand1 + Operand2; 
     //   	.......
