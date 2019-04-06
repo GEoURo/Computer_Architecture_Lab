@@ -56,11 +56,6 @@ module HarzardUnit(
             FlushE <= 1'b1;
             FlushM <= 1'b0;
             FlushW <= 1'b0;
-            StallF <= 1'b0;
-            StallD <= 1'b0;
-            StallE <= 1'b0;
-            StallM <= 1'b0;
-            StallW <= 1'b0;
         end
         else if(JalD)
         begin
@@ -69,11 +64,6 @@ module HarzardUnit(
             FlushE <= 1'b0;
             FlushM <= 1'b0;
             FlushW <= 1'b0;
-            StallF <= 1'b0;
-            StallD <= 1'b0;
-            StallE <= 1'b0;
-            StallM <= 1'b0;
-            StallW <= 1'b0;
         end
         else
         begin
@@ -82,11 +72,6 @@ module HarzardUnit(
             FlushE <= 1'b0;
             FlushM <= 1'b0;
             FlushW <= 1'b0;
-            StallF <= 1'b0;
-            StallD <= 1'b0;
-            StallE <= 1'b0;
-            StallM <= 1'b0;
-            StallW <= 1'b0;
         end
     end
 
