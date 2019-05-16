@@ -23,8 +23,7 @@ reg [            31:0] cache_mem    [SET_SIZE][WAY_CNT][LINE_SIZE]; // SET_SIZE�
 reg [TAG_ADDR_LEN-1:0] cache_tags   [SET_SIZE][WAY_CNT];            // SET_SIZE个TAG
 reg                    valid        [SET_SIZE][WAY_CNT];            // SET_SIZE个valid(有效�?)
 reg                    dirty        [SET_SIZE][WAY_CNT];            // SET_SIZE个dirty(脏位)
-reg [             7:0] age          [SET_SIZE][WAY_CNT];            // 每个line的时�?
-reg [             7:0] cur_age;                                     // 记录当前的时间戳
+reg [            15:0] age          [SET_SIZE][WAY_CNT];            // 每个line的时�?
 
 wire [              2-1 :0]   word_addr;                   // 将输入地�?addr拆分成这5个部�?
 wire [  LINE_ADDR_LEN-1 :0]   line_addr;
@@ -52,6 +51,7 @@ integer way_choice;
 integer swap_out_choice;
 always @ (*) 
 begin              // 判断 输入的address 是否�? cache 中命�?
+    cache_hit = 0;
     for(integer i = 0; i < WAY_CNT; i++)
     begin
         if( valid[set_addr][i] && cache_tags[set_addr][i] == tag_addr )   // 如果 cache line有效，并且tag与输入地�?中的tag相等，则命中
@@ -63,17 +63,15 @@ begin              // 判断 输入的address 是否�? cache 中命�?
     end
 end
 
-reg [7:0]age_temp;
 always @ (*)
 begin
     if(!cache_hit)
     begin
-        age_temp = 1 << 7;
+        swap_out_choice = 0;
         for(integer i = 0; i < WAY_CNT; i++)
         begin
-            if(age[set_addr][i] < age_temp)
+            if(age[set_addr][i] > age[set_addr][swap_out_choice])
             begin
-                age_temp = age[set_addr][i];
                 swap_out_choice = i;
             end
         end        
@@ -127,6 +125,12 @@ always @ (posedge clk or posedge rst) begin     // ?? cache ???
                                 begin                                   // 反之，不�?要换出，直接换入
                                     cache_stat  <= SWAP_IN;
                                 end
+                                for(integer i = 0; i < WAY_CNT; i++)
+                                begin
+                                    if(valid[set_addr][i] && i != swap_out_choice)
+                                        age[set_addr][i] <= age[set_addr][i] + 1;
+                                end
+                                age[set_addr][swap_out_choice] <= 0;
                                 {mem_rd_tag_addr, mem_rd_set_addr} <= {tag_addr, set_addr};
                             end
                         end
@@ -141,7 +145,6 @@ always @ (posedge clk or posedge rst) begin     // ?? cache ???
                         if(mem_gnt) 
                         begin           // 如果主存握手信号有效，说明换入成功，跳到下一状�??
                             cache_stat <= SWAP_IN_OK;
-                            cur_age <= cur_age + 1;
                         end
                     end
         SWAP_IN_OK:begin           // 上一个周期换入成功，这周期将主存读出的line写入cache，并更新tag，置高valid，置低dirty
@@ -149,7 +152,6 @@ always @ (posedge clk or posedge rst) begin     // ?? cache ???
                         cache_tags[mem_rd_set_addr][swap_out_choice] <= mem_rd_tag_addr;
                         valid     [mem_rd_set_addr][swap_out_choice] <= 1'b1;
                         dirty     [mem_rd_set_addr][swap_out_choice] <= 1'b0;
-                        age       [mem_rd_set_addr][swap_out_choice] <= cur_age;
                         cache_stat <= IDLE;        // 回到就绪状�??
                    end
         endcase
