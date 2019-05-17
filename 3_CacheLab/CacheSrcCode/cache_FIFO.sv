@@ -87,7 +87,7 @@ always @ (posedge clk or posedge rst) begin     // ?? cache ???
             begin
                 dirty[i][j] = 1'b0;
                 valid[i][j] = 1'b0;
-                age[i][j] = 32'b0;
+                age[i][j] = {16{1'b1}};
             end
         for(integer k=0; k<LINE_SIZE; k++)
             mem_wr_line[k] <= 0;
@@ -125,12 +125,6 @@ always @ (posedge clk or posedge rst) begin     // ?? cache ???
                                 begin                                   // 反之，不�?要换出，直接换入
                                     cache_stat  <= SWAP_IN;
                                 end
-                                for(integer i = 0; i < WAY_CNT; i++)
-                                begin
-                                    if(valid[set_addr][i] && i != swap_out_choice)
-                                        age[set_addr][i] <= age[set_addr][i] + 1;
-                                end
-                                age[set_addr][swap_out_choice] <= 0;
                                 {mem_rd_tag_addr, mem_rd_set_addr} <= {tag_addr, set_addr};
                             end
                         end
@@ -152,6 +146,12 @@ always @ (posedge clk or posedge rst) begin     // ?? cache ???
                         cache_tags[mem_rd_set_addr][swap_out_choice] <= mem_rd_tag_addr;
                         valid     [mem_rd_set_addr][swap_out_choice] <= 1'b1;
                         dirty     [mem_rd_set_addr][swap_out_choice] <= 1'b0;
+                        for(integer i = 0; i < WAY_CNT; i++)
+                        begin
+                            if(valid[set_addr][i] && i != swap_out_choice)
+                                age[set_addr][i] <= age[set_addr][i] + 1;
+                        end
+                        age[set_addr][swap_out_choice] <= 0;
                         cache_stat <= IDLE;        // 回到就绪状�??
                    end
         endcase
