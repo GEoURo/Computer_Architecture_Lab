@@ -1,6 +1,6 @@
 `timescale 1ns / 1ps
 //////////////////////////////////////////////////////////////////////////////////
-// Company: USTC ESLAB（Embeded System Lab）
+// Company: USTC ESLAB（Embeded System Lab�?
 // Engineer: Haojun Xia
 // Create Date: 2019/02/08
 // Design Name: RISCV-Pipline CPU
@@ -15,7 +15,11 @@ module EXSegReg(
     input wire clear,
     //Data Signals
     input wire [31:0] PCD,
-    output reg [31:0] PCE, 
+    output reg [31:0] PCE,
+	input wire [1:0] BranchFlagsD,
+	output reg [1:0] BranchFlagsE,
+	input wire [2:0] BranchIndexD,
+	output reg [2:0] BranchIndexE,
     input wire [31:0] JalNPC,
     output reg [31:0] BrNPC, 
     input wire [31:0] ImmD,
@@ -77,7 +81,9 @@ module EXSegReg(
         if(en)
             if(clear)
                 begin
-                PCE<=32'b0; 
+                PCE<=32'b0;
+				BranchFlagsE <= 2'b0;
+				BranchIndexE <= 3'b0;
                 BrNPC<=32'b0; 
                 ImmE<=32'b0;
                 RdE<=32'b0;
@@ -97,6 +103,8 @@ module EXSegReg(
                 AluSrc2E<=2'b0;     
             end else begin
                 PCE<=PCD; 
+				BranchFlagsE <= BranchFlagsD;
+				BranchIndexE <= BranchIndexD;
                 BrNPC<=JalNPC; 
                 ImmE<=ImmD;
                 RdE<=RdD;

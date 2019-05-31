@@ -11,7 +11,7 @@ initial begin douta=0;end
 reg [0:1023][31:0] ram_cell;
 
 initial begin
-    ram_cell[       0] = 32'h40004693;
+    ram_cell[       0] = 32'h20004693;
     ram_cell[       1] = 32'h00001137;
     ram_cell[       2] = 32'h00004533;
     ram_cell[       3] = 32'h000045b3;

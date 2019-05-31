@@ -31,7 +31,7 @@ module RV32Core(
     wire [3:0] MemWriteD;
     wire [1:0] RegReadD;
     wire [2:0] BranchTypeD;
-    wire [4:0] AluContrlD;
+    wire [3:0] AluContrlD;
     wire [1:0] AluSrc2D;
     wire [2:0] RegWriteW;
     wire [4:0] RdW;
@@ -62,7 +62,7 @@ module RV32Core(
     wire [1:0] AluSrc2E;
     wire [31:0] Operand1;
     wire [31:0] Operand2;
-    wire BranchE;
+    wire [1:0] BranchE;
     wire [31:0] AluOutE;
     wire [31:0] AluOutM; 
     wire [31:0] ForwardData1;
@@ -96,15 +96,33 @@ module RV32Core(
     // ---------------------------------------------
     // PC-IF
     // ---------------------------------------------
+	wire [1:0] BranchFlags;
+	wire [2:0] BranchIndex;
+	wire [2:0] BranchIndexE;
+	wire [1:0] BranchFlagsF;
+	wire [2:0] BranchIndexF;
+	wire [1:0] BranchFlagsD;
+    wire [2:0] BranchIndexD;
+	wire [1:0] BranchFlagsE;
+    
     NPC_Generator NPC_Generator1(
+        .clk(CPU_CLK),
         .PCF(PCF),
         .JalrTarget(AluOutE), 
         .BranchTarget(BrNPC), 
         .JalTarget(JalNPC),
+		.BranchFlagsF(BranchFlagsF),
+		.BranchIndexF(BranchIndexF),
+		.PCE(PCE),
         .BranchE(BranchE),
+        .BranchFlagsE(BranchFlagsE),
+		.BranchIndexE(BranchIndexE),
         .JalD(JalD),
         .JalrE(JalrE),
-        .PC_In(PC_In)
+		.CpuRst(CPU_RST),
+        .PC_In(PC_In),
+		.BranchFlags(BranchFlags),
+		.BranchIndex(BranchIndex)
     );
 
     IFSegReg IFSegReg1(
@@ -112,12 +130,18 @@ module RV32Core(
         .en(~StallF),
         .clear(FlushF), 
         .PC_In(PC_In),
-        .PCF(PCF)
+		.BranchFlags(BranchFlags),
+		.BranchIndex(BranchIndex),
+        .PCF(PCF),
+		.BranchFlagsF(BranchFlagsF),
+		.BranchIndexF(BranchIndexF)
     );
 
     // ---------------------------------------------
     // ID stage
     // ---------------------------------------------
+	
+	
     IDSegReg IDSegReg1(
         .clk(CPU_CLK),
         .clear(FlushD),
@@ -129,7 +153,11 @@ module RV32Core(
         .WE2(CPU_Debug_InstRAM_WE2),
         .RD2(CPU_Debug_InstRAM_RD2),
         .PCF(PCF),
-        .PCD(PCD) 
+        .PCD(PCD),
+		.BranchFlagsF(BranchFlagsF),
+		.BranchFlagsD(BranchFlagsD),
+		.BranchIndexF(BranchIndexF),
+		.BranchIndexD(BranchIndexD)
     );
 
     ControlUnit ControlUnit1(
@@ -171,12 +199,17 @@ module RV32Core(
     // ---------------------------------------------
     // EX stage
     // ---------------------------------------------
+	
     EXSegReg EXSegReg1(
         .clk(CPU_CLK),
         .en(~StallE),
         .clear(FlushE),
         .PCD(PCD),
-        .PCE(PCE), 
+        .PCE(PCE),
+		.BranchFlagsD(BranchFlagsD),
+		.BranchFlagsE(BranchFlagsE),
+		.BranchIndexD(BranchIndexD),
+		.BranchIndexE(BranchIndexE),
         .JalNPC(JalNPC),
         .BrNPC(BrNPC), 
         .ImmD(ImmD),
@@ -221,6 +254,7 @@ module RV32Core(
     	);
 
     BranchDecisionMaking BranchDecisionMaking1(
+		.BranchFlagsE(BranchFlagsE),
         .BranchTypeE(BranchTypeE),
         .Operand1(Operand1),
         .Operand2(Operand2),

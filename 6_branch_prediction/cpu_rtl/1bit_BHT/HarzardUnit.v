@@ -11,7 +11,8 @@
 //////////////////////////////////////////////////////////////////////////////////
 module HarzardUnit(
     input wire CpuRst, ICacheMiss, DCacheMiss, 
-    input wire BranchE, JalrE, JalD, 
+	input wire [1:0] BranchE,
+    input wire JalrE, JalD, 
     input wire [4:0] Rs1D, Rs2D, Rs1E, Rs2E, RdE, RdM, RdW,
     input wire [1:0] RegReadE,
     input wire [2:0] MemToRegE, RegWriteM, RegWriteW,
@@ -25,7 +26,7 @@ module HarzardUnit(
             {StallF,FlushF,StallD,FlushD,StallE,FlushE,StallM,FlushM,StallW,FlushW} <= 10'b0101010101;
         else if(DCacheMiss | ICacheMiss)
             {StallF,FlushF,StallD,FlushD,StallE,FlushE,StallM,FlushM,StallW,FlushW} <= 10'b1010101010;
-        else if(BranchE | JalrE)
+        else if(BranchE != 2'b00 | JalrE)
             {StallF,FlushF,StallD,FlushD,StallE,FlushE,StallM,FlushM,StallW,FlushW} <= 10'b0001010000;
         else if(MemToRegE & ((RdE==Rs1D)||(RdE==Rs2D)) )
             {StallF,FlushF,StallD,FlushD,StallE,FlushE,StallM,FlushM,StallW,FlushW} <= 10'b1010010000;

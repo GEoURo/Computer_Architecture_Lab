@@ -23,13 +23,21 @@ module IDSegReg(
     output wire [31:0] RD2,
     //
     input wire [31:0] PCF,
-    output reg [31:0] PCD 
+    output reg [31:0] PCD,
+	input wire [1:0] BranchFlagsF,
+	output reg [1:0] BranchFlagsD,
+	input wire [2:0] BranchIndexF,
+	output reg [2:0] BranchIndexD
     );
     
     initial PCD = 0;
     always@(posedge clk)
         if(en)
+		begin
             PCD <= clear ? 0: PCF;
+			BranchFlagsD <= clear ? 0: BranchFlagsF;
+			BranchIndexD <= clear ? 0: BranchIndexF;
+		end
     
     wire [31:0] RD_raw;
     InstructionRam InstructionRamInst (
