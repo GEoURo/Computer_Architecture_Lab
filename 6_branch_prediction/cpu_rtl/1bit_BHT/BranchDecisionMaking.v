@@ -1,6 +1,6 @@
 `timescale 1ns / 1ps
 //////////////////////////////////////////////////////////////////////////////////
-// Company: USTC ESLAB（Embeded System Lab�?
+// Company: USTC ESLAB（Embeded System Lab�?
 // Engineer: Haojun Xia
 // Create Date: 2019/03/14 12:03:15
 // Design Name: RISCV-Pipline CPU
@@ -43,7 +43,7 @@ wire signed [31:0] Operand2S = $signed(Operand2);
 	begin
 		if(BranchFlagsE[0] == 1'b0 && Branch)
 			BranchE <= 2'b01;
-		else if(BranchFlagsE == 2'b10 && Branch)
+		else if(BranchFlagsE == 2'b01 && Branch)
 			BranchE <= 2'b10;
 		else if(BranchFlagsE == 2'b11 && !Branch)
 			BranchE <= 2'b11;
